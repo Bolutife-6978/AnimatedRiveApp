@@ -88,6 +88,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 btnAnimationController: _btnAnimationController,
                 press: () {
                   _btnAnimationController.isActive = true;
+                  showGeneralDialog(
+                    barrierDismissible: true,
+                    barrierLabel: "Sign In",
+                    context: context,
+                    pageBuilder: (context, _, __) => Center(
+                      child: Container(
+                        height: 620,
+                        margin: EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(40),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
                 },
               ),
               const Padding(
