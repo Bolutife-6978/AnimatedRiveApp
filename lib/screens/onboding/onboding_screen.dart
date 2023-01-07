@@ -2,9 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rive/rive.dart';
 
 import 'components/anmiated_btn.dart';
+import 'components/sign_In_form..dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -88,23 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 btnAnimationController: _btnAnimationController,
                 press: () {
                   _btnAnimationController.isActive = true;
-                  showGeneralDialog(
-                    barrierDismissible: true,
-                    barrierLabel: "Sign In",
-                    context: context,
-                    pageBuilder: (context, _, __) => Center(
-                      child: Container(
-                        height: 620,
-                        margin: EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(40),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
+                  customSignInDialogue(context);
                 },
               ),
               const Padding(
@@ -117,6 +103,116 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
         ))
       ]),
+    );
+  }
+
+  Future<Object?> customSignInDialogue(BuildContext context) {
+    return showGeneralDialog(
+      barrierDismissible: true,
+      barrierLabel: "Sign In",
+      context: context,
+      pageBuilder: (context, _, __) => Center(
+        child: Container(
+          height: 620,
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.94),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(40),
+            ),
+          ),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Stack(
+              children: [
+                Column(
+                  children: [
+                    const Text(
+                      "Sign In",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontFamily: "Poppins",
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 16,
+                      ),
+                      child: Text(
+                        "Access to 240+ hours of content.Learn design and code by building real apps with Flutter and Swift.",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SignInForm(),
+                    Row(
+                      children: const [
+                        Expanded(child: Divider()),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                          ),
+                          child: Text(
+                            "OR",
+                            style: TextStyle(
+                              color: Colors.black26,
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Divider()),
+                      ],
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 24,
+                      ),
+                      child: Text(
+                        "Sign up with Email,Apple or Google",
+                        style: TextStyle(
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () {},
+                            icon: SvgPicture.asset(
+                              "assets/icons/email_box.svg",
+                              height: 64,
+                              width: 64,
+                            )),
+                        IconButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () {},
+                            icon: SvgPicture.asset(
+                              "assets/icons/apple_box.svg",
+                              height: 64,
+                              width: 64,
+                            )),
+                        IconButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () {},
+                            icon: SvgPicture.asset(
+                              "assets/icons/google_box.svg",
+                              height: 64,
+                              width: 64,
+                            )),
+                      ],
+                    )
+                  ],
+                ),
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: Colors.white,
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
