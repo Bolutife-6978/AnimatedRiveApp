@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rive/rive.dart';
 
 import 'components/anmiated_btn.dart';
+import 'components/custom_signIn_dialog.dart';
 import 'components/sign_In_form..dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -16,6 +17,7 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
+  bool isSignInDialogShown = false;
   late RiveAnimationController _btnAnimationController;
 
   @override
@@ -58,161 +60,72 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
         ),
         //Text
-        SafeArea(
-            child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Spacer(),
-              SizedBox(
-                width: 260,
-                child: Column(
-                  children: const [
-                    Text(
-                      "Learn design & code",
-                      style: TextStyle(
-                        fontSize: 60,
-                        fontFamily: "Poppins",
-                        height: 1.2,
-                      ),
-                    ),
-                    Text(
-                        "Don't skip design. Learn design and code, by building real apps with Flutter and Swift. Complete courses about the best courses.")
-                  ],
-                ),
-              ),
-              //Animated button
-              const Spacer(
-                flex: 2,
-              ),
-              AnimatedBtn(
-                btnAnimationController: _btnAnimationController,
-                press: () {
-                  _btnAnimationController.isActive = true;
-                  customSignInDialogue(context);
-                },
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 24),
-                child: Text(
-                  "Purchase includes access to30+ courses, 240+ premium tutorial,120+ hours ofvideos,source files and certificates.",
-                ),
-              ),
-            ],
-          ),
-        ))
-      ]),
-    );
-  }
-
-  Future<Object?> customSignInDialogue(BuildContext context) {
-    return showGeneralDialog(
-      barrierDismissible: true,
-      barrierLabel: "Sign In",
-      context: context,
-      pageBuilder: (context, _, __) => Center(
-        child: Container(
-          height: 620,
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.94),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(40),
-            ),
-          ),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Stack(
+        AnimatedPositioned(
+          top: isSignInDialogShown ? -50 : 0,
+          duration: const Duration(milliseconds: 300),
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: SafeArea(
+              child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  children: [
-                    const Text(
-                      "Sign In",
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontFamily: "Poppins",
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 16,
-                      ),
-                      child: Text(
-                        "Access to 240+ hours of content.Learn design and code by building real apps with Flutter and Swift.",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const SignInForm(),
-                    Row(
-                      children: const [
-                        Expanded(child: Divider()),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                          ),
-                          child: Text(
-                            "OR",
-                            style: TextStyle(
-                              color: Colors.black26,
-                            ),
-                          ),
-                        ),
-                        Expanded(child: Divider()),
-                      ],
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 24,
-                      ),
-                      child: Text(
-                        "Sign up with Email,Apple or Google",
+                const Spacer(),
+                SizedBox(
+                  width: 260,
+                  child: Column(
+                    children: const [
+                      Text(
+                        "Learn design & code",
                         style: TextStyle(
-                          color: Colors.black54,
+                          fontSize: 60,
+                          fontFamily: "Poppins",
+                          height: 1.2,
                         ),
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconButton(
-                            padding: EdgeInsets.zero,
-                            onPressed: () {},
-                            icon: SvgPicture.asset(
-                              "assets/icons/email_box.svg",
-                              height: 64,
-                              width: 64,
-                            )),
-                        IconButton(
-                            padding: EdgeInsets.zero,
-                            onPressed: () {},
-                            icon: SvgPicture.asset(
-                              "assets/icons/apple_box.svg",
-                              height: 64,
-                              width: 64,
-                            )),
-                        IconButton(
-                            padding: EdgeInsets.zero,
-                            onPressed: () {},
-                            icon: SvgPicture.asset(
-                              "assets/icons/google_box.svg",
-                              height: 64,
-                              width: 64,
-                            )),
-                      ],
-                    )
-                  ],
+                      Text(
+                          "Don't skip design. Learn design and code, by building real apps with Flutter and Swift. Complete courses about the best courses.")
+                    ],
+                  ),
                 ),
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Colors.white,
-                )
+                //Animated button
+                const Spacer(
+                  flex: 2,
+                ),
+                AnimatedBtn(
+                  btnAnimationController: _btnAnimationController,
+                  press: () {
+                    _btnAnimationController.isActive = true;
+                    Future.delayed(
+                      const Duration(milliseconds: 800),
+                      () {
+                        setState(() {
+                          isSignInDialogShown = true;
+                        });
+                        customSignInDialogue(
+                          context,
+                          onClosed: (_) {
+                            setState(() {
+                              isSignInDialogShown = true;
+                            });
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24),
+                  child: Text(
+                    "Purchase includes access to30+ courses, 240+ premium tutorial,120+ hours ofvideos,source files and certificates.",
+                  ),
+                ),
               ],
             ),
-          ),
-        ),
-      ),
+          )),
+        )
+      ]),
     );
   }
 }
