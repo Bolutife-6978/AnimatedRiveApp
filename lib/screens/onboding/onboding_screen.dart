@@ -62,7 +62,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         //Text
         AnimatedPositioned(
           top: isSignInDialogShown ? -50 : 0,
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 240),
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: SafeArea(
