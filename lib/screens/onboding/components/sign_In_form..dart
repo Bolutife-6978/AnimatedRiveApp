@@ -16,10 +16,13 @@ class _SignInFormState extends State<SignInForm> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool isShownLoading = false;
+  bool isShownConfetti = false;
 
   late SMITrigger check;
   late SMITrigger error;
   late SMITrigger reset;
+
+  late SMITrigger confetti;
 
   StateMachineController getRiveController(Artboard artboard) {
     StateMachineController? controller =
@@ -27,6 +30,32 @@ class _SignInFormState extends State<SignInForm> {
     artboard.addController(controller!);
 
     return controller;
+  }
+
+  void SignIn(BuildContext context) {
+    setState(() {
+      isShownLoading = true;
+      isShownConfetti = true;
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      if (_formKey.currentState!.validate()) {
+        check.fire();
+        Future.delayed(Duration(seconds: 2), () {
+          setState(() {
+            isShownLoading = false;
+          });
+
+          confetti.fire();
+        });
+      } else {
+        error.fire();
+        Future.delayed(Duration(seconds: 2), () {
+          setState(() {
+            isShownLoading = false;
+          });
+        });
+      }
+    });
   }
 
   @override
@@ -85,11 +114,7 @@ class _SignInFormState extends State<SignInForm> {
                 padding: const EdgeInsets.only(top: 8, bottom: 24),
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    setState(() {
-                      isShownLoading = true;
-                    });
-                    if (_formKey.currentState!.validate()) {
-                    } else {}
+                    SignIn(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFF77D8E),
@@ -114,30 +139,58 @@ class _SignInFormState extends State<SignInForm> {
           ),
         ),
         isShownLoading
-            ? Positioned.fill(
-                child: Column(
-                  children: [
-                    Spacer(),
-                    SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: RiveAnimation.asset(
-                        "assets/RiveAssets/check.riv",
-                        onInit: (artboard) {
-                          StateMachineController controller =
-                              getRiveController(artboard);
-                          check = controller.findSMI("Check") as SMITrigger;
-                          error = controller.findSMI("Error") as SMITrigger;
-                          reset = controller.findSMI("Reset") as SMITrigger;
-                        },
-                      ),
-                    ),
-                    Spacer(flex: 2),
-                  ],
+            ? CustomPositioned(
+                child: RiveAnimation.asset(
+                "assets/RiveAssets/check.riv",
+                onInit: (artboard) {
+                  StateMachineController controller =
+                      getRiveController(artboard);
+                  check = controller.findSMI("Check") as SMITrigger;
+                  error = controller.findSMI("Error") as SMITrigger;
+                  reset = controller.findSMI("Reset") as SMITrigger;
+                },
+              ))
+            : SizedBox(),
+        isShownConfetti
+            ? CustomPositioned(
+                child: Transform.scale(
+                  scale: 7,
+                  child: RiveAnimation.asset(
+                    "assets/RiveAssets/confetti.riv",
+                    onInit: (artboard) {
+                      StateMachineController controller =
+                          getRiveController(artboard);
+
+                      confetti =
+                          controller.findSMI("Trigger explosion") as SMITrigger;
+                    },
+                  ),
                 ),
               )
             : SizedBox(),
       ],
+    );
+  }
+}
+
+class CustomPositioned extends StatelessWidget {
+  const CustomPositioned({super.key, required this.child, this.size = 100});
+  final Widget child;
+  final double size;
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: Column(
+        children: [
+          Spacer(),
+          SizedBox(
+            height: size,
+            width: size,
+            child: child,
+          ),
+          Spacer(flex: 2),
+        ],
+      ),
     );
   }
 }
