@@ -26,17 +26,24 @@ class _EntryPointState extends State<EntryPoint> {
               )),
           child: Row(
             children: [
-              SizedBox(
-                height: 36,
-                width: 36,
-                child: RiveAnimation.asset(
-                  "assets/RiveAssets/icons.riv",
-                  artboard: "HOME",
-                  onInit: (artboard) {
-                    StateMachineController controller =
-                        RiveUtils.getRiveController(artboard,
-                            stateMachineName: "SEARCH_Interactivity");
-                  },
+              GestureDetector(
+                onTap: () {
+                  searchTrigger.change(true);
+                },
+                child: SizedBox(
+                  height: 36,
+                  width: 36,
+                  child: RiveAnimation.asset(
+                    "assets/RiveAssets/icons.riv",
+                    artboard: "SEARCH",
+                    onInit: (artboard) {
+                      StateMachineController controller =
+                          RiveUtils.getRiveController(artboard,
+                              stateMachineName: "SEARCH_Interactivity");
+
+                      searchTrigger = controller.findSMI("active") as SMIBool;
+                    },
+                  ),
                 ),
               )
             ],
@@ -46,3 +53,39 @@ class _EntryPointState extends State<EntryPoint> {
     );
   }
 }
+
+class RiveAsset {
+  final String artboard, stateMachineName, title, src;
+  late SMIBool? input;
+
+  RiveAsset(this.src,
+      {required this.artboard,
+      required this.stateMachineName,
+      required this.title,
+      this.input});
+
+  set setInput(SMIBool status) {
+    input = status;
+  }
+}
+
+List<RiveAsset> bottomNavs = [
+  RiveAsset(
+    "assets/RiveAssets/icons.riv",
+    artboard: "CHAT",
+    stateMachineName: "CHAT_Interactivity",
+    title: "Chat",
+  ),
+  RiveAsset(
+    "assets/RiveAssets/icons.riv",
+    artboard: "CHAT",
+    stateMachineName: "CHAT_Interactivity",
+    title: "Chat",
+  ),
+  RiveAsset(
+    "assets/RiveAssets/icons.riv",
+    artboard: "CHAT",
+    stateMachineName: "CHAT_Interactivity",
+    title: "Chat",
+  )
+];
