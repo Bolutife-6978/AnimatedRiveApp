@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 import 'package:rive_animation/constants.dart';
+import 'package:rive_animation/models/rive_assets.dart';
 import 'package:rive_animation/utils/rive_utils.dart';
+
+import 'components/animated_bar.dart';
 
 class EntryPoint extends StatefulWidget {
   const EntryPoint({super.key});
@@ -11,41 +14,67 @@ class EntryPoint extends StatefulWidget {
 }
 
 class _EntryPointState extends State<EntryPoint> {
-  late SMIBool searchTrigger;
+  RiveAsset selectedBottomNav = bottomNavs.first;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: SafeArea(
         child: Container(
-          padding: EdgeInsets.all(12),
-          margin: EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.all(12),
+          margin: const EdgeInsets.symmetric(horizontal: 24),
           decoration: BoxDecoration(
               color: backgroundColor2.withOpacity(0.8),
-              borderRadius: BorderRadius.all(
+              borderRadius: const BorderRadius.all(
                 Radius.circular(24),
               )),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              GestureDetector(
-                onTap: () {
-                  searchTrigger.change(true);
-                },
-                child: SizedBox(
-                  height: 36,
-                  width: 36,
-                  child: RiveAnimation.asset(
-                    "assets/RiveAssets/icons.riv",
-                    artboard: "SEARCH",
-                    onInit: (artboard) {
-                      StateMachineController controller =
-                          RiveUtils.getRiveController(artboard,
-                              stateMachineName: "SEARCH_Interactivity");
+              ...List.generate(
+                  bottomNavs.length,
+                  (index) => GestureDetector(
+                        onTap: () {
+                          bottomNavs[index].input!.change(true);
+                          if (bottomNavs[index] != selectedBottomNav) {
+                            setState(() {
+                              selectedBottomNav = bottomNavs[index];
+                            });
+                          }
+                          Future.delayed(const Duration(seconds: 1), () {
+                            bottomNavs[index].input!.change(false);
+                          });
+                        },
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AnimatedBar(
+                              isActive: bottomNavs[index] == selectedBottomNav,
+                            ),
+                            SizedBox(
+                              height: 36,
+                              width: 36,
+                              child: Opacity(
+                                opacity: bottomNavs[index] == selectedBottomNav
+                                    ? 1
+                                    : 0.5,
+                                child: RiveAnimation.asset(
+                                  bottomNavs.first.src,
+                                  artboard: bottomNavs[index].artboard,
+                                  onInit: (artboard) {
+                                    StateMachineController controller =
+                                        RiveUtils.getRiveController(artboard,
+                                            stateMachineName: bottomNavs[index]
+                                                .stateMachineName);
 
-                      searchTrigger = controller.findSMI("active") as SMIBool;
-                    },
-                  ),
-                ),
-              )
+                                    bottomNavs[index].input =
+                                        controller.findSMI("active") as SMIBool;
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ))
             ],
           ),
         ),
@@ -54,38 +83,4 @@ class _EntryPointState extends State<EntryPoint> {
   }
 }
 
-class RiveAsset {
-  final String artboard, stateMachineName, title, src;
-  late SMIBool? input;
 
-  RiveAsset(this.src,
-      {required this.artboard,
-      required this.stateMachineName,
-      required this.title,
-      this.input});
-
-  set setInput(SMIBool status) {
-    input = status;
-  }
-}
-
-List<RiveAsset> bottomNavs = [
-  RiveAsset(
-    "assets/RiveAssets/icons.riv",
-    artboard: "CHAT",
-    stateMachineName: "CHAT_Interactivity",
-    title: "Chat",
-  ),
-  RiveAsset(
-    "assets/RiveAssets/icons.riv",
-    artboard: "CHAT",
-    stateMachineName: "CHAT_Interactivity",
-    title: "Chat",
-  ),
-  RiveAsset(
-    "assets/RiveAssets/icons.riv",
-    artboard: "CHAT",
-    stateMachineName: "CHAT_Interactivity",
-    title: "Chat",
-  )
-];

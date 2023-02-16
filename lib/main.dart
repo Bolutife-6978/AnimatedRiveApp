@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rive_animation/screens/onboding/components/side_menu.dart';
-import 'package:rive_animation/screens/onboding/onboding_screen.dart';
+
+import 'onboding/onboding_screen.dart';
 
 void main() {
   runApp(const MyApp());
