@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'onboding/onboding_screen.dart';
+import 'screens/onboding/onboding_screen.dart';
 
 void main() {
   runApp(const MyApp());
