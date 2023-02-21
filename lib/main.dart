@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rive_animation/components/side_menu.dart';
 
 import 'screens/onboding/onboding_screen.dart';
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
           errorBorder: defaultInputBorder,
         ),
       ),
-      home: const OnboardingScreen(),
+      home: const SideMenu(),
     );
   }
 }

@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/cupertino.dart';
 
 class InfoCard extends StatelessWidget {
   const InfoCard({
@@ -16,22 +15,11 @@ class InfoCard extends StatelessWidget {
     return ListTile(
       leading: const CircleAvatar(
         backgroundColor: Colors.white24,
-        child: Icon(
-          CupertinoIcons.person,
-          color: Colors.white,
-        ),
+        child: Icon(CupertinoIcons.person, color: Colors.white),
       ),
       title: Text(
         name,
-        style: const TextStyle(
-          color: Colors.white,
-        ),
-      ),
-      subtitle: Text(
-        profession,
-        style: const TextStyle(
-          color: Colors.white,
-        ),
+        style: const TextStyle(color: Colors.white),
       ),
     );
   }
