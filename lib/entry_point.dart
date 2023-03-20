@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 import 'package:rive_animation/constants.dart';
@@ -6,6 +8,7 @@ import 'package:rive_animation/screens/home/home_screen.dart';
 import 'package:rive_animation/utils/rive_utils.dart';
 
 import 'components/animated_bar.dart';
+import 'components/side_menu.dart';
 
 class EntryPoint extends StatefulWidget {
   const EntryPoint({super.key});
@@ -14,14 +17,83 @@ class EntryPoint extends StatefulWidget {
   State<EntryPoint> createState() => _EntryPointState();
 }
 
-class _EntryPointState extends State<EntryPoint> {
+class _EntryPointState extends State<EntryPoint>
+    with SingleTickerProviderStateMixin {
   RiveAsset selectedBottomNav = bottomNavs.first;
+
+  late AnimationController _animationController;
+  late Animation<double> animation;
+  late Animation<double> scalAnimation;
+
+  late SMIBool isSideBarClosed;
+  bool isSideMenuClosed = true;
+
+  @override
+  void initState() {
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 200),
+    )..addListener(() {
+        setState(() {});
+      });
+    animation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
+        parent: _animationController, curve: Curves.fastOutSlowIn));
+    scalAnimation = Tween<double>(begin: 1, end: 0.8).animate(CurvedAnimation(
+        parent: _animationController, curve: Curves.fastOutSlowIn));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor2,
       resizeToAvoidBottomInset: false,
       extendBody: true,
-      body: const HomeScreen(),
+      body: Stack(
+        children: [
+          AnimatedPositioned(
+            duration: Duration(milliseconds: 200),
+            curve: Curves.fastOutSlowIn,
+            width: 288,
+            left: isSideMenuClosed ? -288 : 8,
+            height: MediaQuery.of(context).size.height,
+            child: SideMenu(),
+          ),
+          Transform.translate(
+              offset: Offset(animation.value * 288, 0),
+              child: Transform.scale(
+                  scale: isSideMenuClosed ? 1 : 0.8,
+                  child: const ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(24)),
+                      child: HomeScreen()))),
+          MenuBtn(
+            press: () {
+              isSideBarClosed.value = !isSideBarClosed.value;
+              if (isSideMenuClosed) {
+                _animationController.forward();
+              } else {
+                _animationController.reverse();
+              }
+              setState(() {
+                isSideMenuClosed = isSideBarClosed.value;
+              });
+            },
+            riveOnInit: (artboard) {
+              StateMachineController controller = RiveUtils.getRiveController(
+                  artboard,
+                  stateMachineName: "State Machine");
+              isSideBarClosed = controller.findSMI("isOpen") as SMIBool;
+              isSideBarClosed.value = true;
+            },
+          ),
+        ],
+      ),
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(12),
@@ -80,6 +152,45 @@ class _EntryPointState extends State<EntryPoint> {
                         ),
                       ))
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MenuBtn extends StatelessWidget {
+  const MenuBtn({
+    super.key,
+    required this.press,
+    required this.riveOnInit,
+  });
+  final VoidCallback press;
+  final ValueChanged<Artboard> riveOnInit;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: GestureDetector(
+        onTap: press,
+        child: Container(
+          margin: EdgeInsets.only(left: 16),
+          height: 40,
+          width: 40,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                offset: Offset(0, 3),
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: RiveAnimation.asset(
+            "assets/RiveAssets/menu_button.riv",
+            onInit: riveOnInit,
           ),
         ),
       ),
