@@ -21,6 +21,10 @@ class InfoCard extends StatelessWidget {
         name,
         style: const TextStyle(color: Colors.white),
       ),
+      subtitle: Text(
+        profession,
+        style: TextStyle(color: Colors.white),
+      ),
     );
   }
 }

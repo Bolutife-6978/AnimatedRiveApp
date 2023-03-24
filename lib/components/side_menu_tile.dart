@@ -58,6 +58,8 @@ class SideMenuTile extends StatelessWidget {
                 menu.title,
                 style: TextStyle(color: Colors.white),
               ),
+              
+              
             ),
           ],
         ),
